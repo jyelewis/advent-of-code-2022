@@ -1,0 +1,13 @@
+{
+  "name": "advent-of-code-2022",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "ts-node"
+  },
+  "devDependencies": {
+    "typescript": "^4.9.3",
+    "@types/node": "^18.11.10"
+  }
+}
