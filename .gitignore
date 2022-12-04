@@ -1,3 +1,9 @@
-node_modules/
+# OS/IDE
 .idea/
 .DS_Store
+
+# Node
+node_modules/
+
+# Rust
+target/
