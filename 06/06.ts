@@ -6,7 +6,7 @@ function findEndOfFirstMarker(markerLength: number) {
   // scan through the string, character by character
   for (let i = 0; i < input.length - markerLength; i++) {
     // look forward for a marker
-    const potentialMarker = input.slice(i, i + markerLength);
+    const potentialMarker = input.substring(i, i + markerLength);
 
     // check if all characters in our potential marker are unique
     if (new Set(potentialMarker).size === markerLength) {
