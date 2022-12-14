@@ -39,10 +39,18 @@ const minX = Math.min(...rockLines.flatMap((line) => [line[0].x, line[1].x]));
 const maxX = Math.max(...rockLines.flatMap((line) => [line[0].x, line[1].x]));
 const maxY = Math.max(...rockLines.flatMap((line) => [line[0].y, line[1].y]));
 
-const xOffset = minX - 1;
-const caveWidth = maxX - minX + 3; // 1 because last item is ON maxX, 2 for buffer on either side
-const caveHeight = maxY + 1;
+// in hindsight, this shifting was silly - made it easier to visualise part 1 but broke part 2
+const caveXPadding = 250; // additional padding to add to each side
+const xOffset = minX - 1 - caveXPadding;
+const caveWidth = maxX - minX + 3 + caveXPadding * 2; // 1 because last item is ON maxX, 2 for buffer on either side
+const caveHeight = maxY + 3; // give padding for our bottom row
 const sandEntryPoint = 500 - xOffset;
+
+// include our floor
+rockLines.push([
+  { x: minX - 1 - caveXPadding, y: caveHeight - 1 },
+  { x: maxX + 1 + caveXPadding, y: caveHeight - 1 },
+]);
 
 // create & populate cave array with air
 const cave: Terrain[][] = []; // [y][x]
@@ -69,41 +77,34 @@ rockLines.forEach(([start, end]) => {
   }
 });
 
-// returns true if sand hit the bottom of the cave
-function dropSand(): boolean {
+function dropSand() {
   const pos: Point = { x: sandEntryPoint, y: 0 };
 
-  while (pos.y < caveHeight - 1) {
+  do {
     // try to move down
     if (cave[pos.y + 1][pos.x] === Terrain.Air) pos.y++;
     // try to move diagonally left
     else if (cave[pos.y + 1][pos.x - 1] === Terrain.Air) {
-      pos.x--;
       pos.y++;
+      pos.x--;
     }
     // try to move diagonally right
     else if (cave[pos.y + 1][pos.x + 1] === Terrain.Air) {
-      pos.x++;
       pos.y++;
+      pos.x++;
     }
     // we are blocked, settle the sand
     else {
       cave[pos.y][pos.x] = Terrain.Sand;
-      return false;
+      break;
     }
-  }
-  // must have hit the bottom of the cave
-  return true;
+  } while (true);
 }
 
 let numSandDropped = 0;
-while (!dropSand()) {
+while (cave[0][sandEntryPoint] === Terrain.Air) {
+  dropSand();
   numSandDropped++;
 }
 
-// print the cave, just for fun
-cave.forEach((caveRow) => {
-  caveRow.forEach((terrain) => process.stdout.write(terrain));
-  process.stdout.write("\n");
-});
-console.log("Sand dropped before overflowing:", numSandDropped);
+console.log("Sand dropped before the top of the cave:", numSandDropped);
